@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axiosInstance from "../api/axios";
+import useAuthContext from "../context/AuthContext";
 
 const Register = () => {
-  const navigate = useNavigate();
+  const { register } = useAuthContext();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -13,27 +13,9 @@ const Register = () => {
   const handleRegister = async (event) => {
     event.preventDefault();
 
-    try {
-      const response = await axiosInstance.post("/register", {
-        name,
-        email,
-        password,
-        c_password: confirmPassword,
-      });
-
-      if (response.data.success === false) {
-        navigate("/register");
-      } else {
-        setName("");
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
-        navigate("/login");
-      }
-    } catch (e) {
-      console.log(e);
-    }
+    register({ name, email, password, c_password: confirmPassword });
   };
+
   return (
     <>
       <section className="bg-gray-50 dark:bg-gray-900">
@@ -77,6 +59,7 @@ const Register = () => {
                   <input
                     type="email"
                     name="email"
+                    value={email}
                     id="email"
                     onChange={(e) => setEmail(e.target.value)}
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"

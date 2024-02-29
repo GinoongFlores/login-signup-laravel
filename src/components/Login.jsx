@@ -1,41 +1,20 @@
 import { useState } from "react";
-import axios from "axios";
-
-import axiosInstance from "../api/axios";
-
 import { Link, useNavigate } from "react-router-dom";
+import useAuthContext from "../context/AuthContext";
+import { useFormik, validateYupSchema } from "formik";
+import * as Yup from "yup";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
+
+  const { login } = useAuthContext();
 
   const handleLogin = async (event) => {
     event.preventDefault();
 
-    try {
-      const response = await axiosInstance.post("/login", {
-        email,
-        password,
-      });
-
-      // const getCurrentUser = await axiosInstance.get("/user");
-      // console.log("current user: " + getCurrentUser.data);
-
-      console.log(response.data);
-
-      if (response.data.success === false) {
-        navigate("/login");
-      } else {
-        setEmail("");
-        setPassword("");
-        navigate("/");
-      }
-
-      return response;
-    } catch (e) {
-      console.log(e);
-    }
+    login({ email, password });
   };
 
   return (
