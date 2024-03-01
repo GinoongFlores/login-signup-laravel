@@ -1,21 +1,30 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useAuthContext from "../context/AuthContext";
-import { useFormik, validateYupSchema } from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  // const navigate = useNavigate();
-
   const { login } = useAuthContext();
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
-
-    login({ email, password });
-  };
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .email("Invalid email address")
+        .required("Email Required"),
+      password: Yup.string()
+        .max(10, "Must be 10 characters only")
+        .min(6, "Minimum of 6 characters only")
+        .required("password required"),
+    }),
+    onSubmit: (values) => {
+      login(values);
+    },
+  });
 
   return (
     <>
@@ -29,7 +38,7 @@ const Login = () => {
               <form
                 className="space-y-4 md:space-y-6"
                 action="#"
-                onSubmit={handleLogin}
+                onSubmit={formik.handleSubmit}
               >
                 <div>
                   <label
@@ -41,13 +50,19 @@ const Login = () => {
                   <input
                     type="email"
                     name="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
                     id="email"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.email}
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     placeholder="name@company.com"
                     required=""
                   />
+                  {formik.touched.email && formik.errors.email ? (
+                    <div className="dark:text-red-400 text-sm">
+                      {formik.errors.email}
+                    </div>
+                  ) : null}
                 </div>
                 <div>
                   <label
@@ -60,12 +75,18 @@ const Login = () => {
                     type="password"
                     name="password"
                     id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.password}
                     placeholder="•••••••••"
                     className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     required=""
                   />
+                  {formik.touched.password && formik.errors.password ? (
+                    <div className="dark:text-red-400 text-sm">
+                      {formik.errors.password}
+                    </div>
+                  ) : null}
                 </div>
 
                 <button

@@ -1,13 +1,11 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axiosInstance from "../api/axios";
-import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const authContext = createContext({});
 
 export const UserAuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  // const [userToken, setUserToken] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -16,7 +14,7 @@ export const UserAuthProvider = ({ children }) => {
   // prevent user from accessing the login page if already logged in
   useEffect(() => {
     if (location.pathname === "/login" && user) {
-      navigate("/");
+      navigate("/", { replace: true });
     }
   });
 
@@ -31,11 +29,11 @@ export const UserAuthProvider = ({ children }) => {
       if (userToken) {
         // console.log(localStorage.getItem("token"));
         getUser(); // get user data after login
-        navigate("/");
+        navigate("/", { replace: true });
         // console.log(response.data.data.name);
       } else {
         navigate("/login");
-        localStorage.clear();
+        // localStorage.clear();
       }
     } catch (error) {
       console.log(error);
@@ -64,8 +62,7 @@ export const UserAuthProvider = ({ children }) => {
         ...data,
       });
       console.log(response.data);
-      getUser();
-      navigate("/login");
+      navigate("/login", { replace: true });
       return response;
     } catch (error) {
       console.log(error);

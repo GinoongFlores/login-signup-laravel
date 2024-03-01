@@ -9,17 +9,19 @@ import { Navigate, useLocation } from "react-router-dom";
 
 function App() {
   const { user } = useAuthContext();
-  const location = useLocation();
 
   const RequireAuth = ({ children }) => {
-    if (!user && location.pathname === "/") {
-      return <Navigate to={"/login"} replace />;
-    } else if (user && location.pathname === "/login") {
-      return <Navigate to={"/"} replace />;
-    } else {
-      return children;
-    }
+    return user ? children : <Navigate to={"/login"} replace={true} />;
+
+    // if (!user && location.pathname === "/") {
+    //   return <Navigate to={"/login"} replace />;
+    // } else if (user && location.pathname === "/login") {
+    //   return <Navigate to={"/"} replace />;
+    // } else {
+    //   return children;
+    // }
   };
+
   return (
     <>
       <Routes>
@@ -31,14 +33,7 @@ function App() {
             </RequireAuth>
           }
         />
-        <Route
-          path="/login"
-          element={
-            <RequireAuth>
-              <Login />
-            </RequireAuth>
-          }
-        />
+        <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
       </Routes>
     </>
