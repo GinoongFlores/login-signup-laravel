@@ -91,8 +91,14 @@ export const UserAuthProvider = ({ children }) => {
       const response = await axiosInstance.post("/register", {
         ...data,
       });
-      console.log(response.data);
-      navigate("/login", { replace: true });
+      const userToken = response.data.data.token;
+      localStorage.setItem("token", userToken);
+      if (userToken) {
+        await getUser();
+        navigate("/", { replace: true });
+      } else {
+        navigate("/register");
+      }
       return response;
     } catch (error) {
       console.log(error);
