@@ -56,6 +56,7 @@ export const UserAuthProvider = ({ children }) => {
         navigate("/", { replace: true });
         // console.log(response.data.data.name);
       } else {
+        localStorage.clear();
         navigate("/login");
       }
     } catch (error) {
@@ -91,6 +92,7 @@ export const UserAuthProvider = ({ children }) => {
       const response = await axiosInstance.post("/register", {
         ...data,
       });
+      console.log(response);
       const userToken = response.data.data.token;
       localStorage.setItem("token", userToken);
       if (userToken) {

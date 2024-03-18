@@ -8,11 +8,11 @@ import useAuthContext from "./context/AuthContext";
 import { Navigate, useLocation } from "react-router-dom";
 
 function App() {
-  const { user } = useAuthContext();
+  const { user, loading } = useAuthContext();
+  let location = useLocation();
 
   const RequireAuth = ({ children }) => {
     return user ? children : <Navigate to={"/login"} replace={true} />;
-
     // if (!user && location.pathname === "/") {
     //   return <Navigate to={"/login"} replace />;
     // } else if (user && location.pathname === "/login") {
@@ -21,6 +21,14 @@ function App() {
     //   return children;
     // }
   };
+
+  if (loading) {
+    return (
+      <div className="h-screen bg:dark-gray-9000 dar:text-white flex justify-center items-center">
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <>

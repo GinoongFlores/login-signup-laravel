@@ -1,4 +1,6 @@
 import Navbar from "./Navbar";
+import useAuthContext from "../context/AuthContext";
+import { useEffect } from "react";
 
 const Welcome = () => {
   return (
@@ -14,6 +16,7 @@ const Welcome = () => {
               Email: <span></span>
             </h2>
           </div>
+          <div className="test"></div>
         </div>
       </section>
     </>
