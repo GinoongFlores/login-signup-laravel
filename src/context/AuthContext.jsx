@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import axiosInstance from "../api/axios";
 import { useNavigate, useLocation } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const authContext = createContext({});
 
@@ -17,6 +18,7 @@ export const UserAuthProvider = ({ children }) => {
     }
   });
 
+  // show loading screen while fetching user data
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
@@ -39,7 +41,7 @@ export const UserAuthProvider = ({ children }) => {
       return response;
     } catch (error) {
       console.log("get user error: ", error);
-      throw error;
+      // throw error;
     }
   };
 
@@ -48,19 +50,18 @@ export const UserAuthProvider = ({ children }) => {
       const response = await axiosInstance.post("/login", {
         ...data,
       });
-
-      const userToken = response.data.data.token;
+      const userToken = response.data.token;
       localStorage.setItem("token", userToken);
       if (userToken) {
-        await getUser(); // get user data after login
+        await getUser();
         navigate("/", { replace: true });
-        // console.log(response.data.data.name);
       } else {
         localStorage.clear();
         navigate("/login");
       }
     } catch (error) {
-      console.log(error);
+      console.log(error.response.data.message);
+      toast.error(error.response.data.message);
     }
   };
 
@@ -80,6 +81,7 @@ export const UserAuthProvider = ({ children }) => {
       localStorage.clear();
       setUser(null);
       navigate("/login", { replace: true });
+      toast.success("Logged out successfully");
 
       return response;
     } catch (error) {
