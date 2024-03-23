@@ -7,9 +7,12 @@ const authContext = createContext({});
 
 export const UserAuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const getToken = localStorage.getItem("token");
 
   // prevent user from accessing the login page if already logged in
   useEffect(() => {
@@ -20,27 +23,27 @@ export const UserAuthProvider = ({ children }) => {
 
   // show loading screen while fetching user data
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
+    if (getToken) {
       getUser().finally(() => setLoading(false));
     } else {
       setLoading(false);
     }
-  }, []);
+  }, [getToken]);
 
   const getUser = async () => {
     try {
       const token = localStorage.getItem("token");
+      setToken(token);
       const response = await axiosInstance.get("/user", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+      // console.log(response);
       setUser(response.data);
-      // console.log(response.data);
       return response;
     } catch (error) {
-      console.log("get user error: ", error);
+      console.log("get user error: ", error.response);
       // throw error;
     }
   };
@@ -50,18 +53,71 @@ export const UserAuthProvider = ({ children }) => {
       const response = await axiosInstance.post("/login", {
         ...data,
       });
+      // console.log(response);
       const userToken = response.data.token;
       localStorage.setItem("token", userToken);
       if (userToken) {
         await getUser();
         navigate("/", { replace: true });
+        toast.success("Logged in successfully", {
+          position: "top-center",
+        });
       } else {
         localStorage.clear();
         navigate("/login");
       }
     } catch (error) {
-      console.log(error.response.data.message);
+      // console.log(error.response);
+      // console.log(error.response.data.message);
       toast.error(error.response.data.message);
+    }
+  };
+
+  const addCompany = async (data) => {
+    try {
+      const response = await axiosInstance.post("/company", data, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
+  // first register
+  const register = async ({ ...data }) => {
+    try {
+      const response = await axiosInstance.post("/register", {
+        ...data,
+      });
+      const userToken = response.data.token;
+      localStorage.setItem("token", userToken);
+      if (userToken) {
+        await getUser();
+        navigate("/", { replace: true });
+        toast.success("Logged in successfully", {
+          position: "top-center",
+        });
+      } else {
+        navigate("/register");
+      }
+      return response;
+    } catch (error) {
+      // console.log(error);
+      const errors = error.response.data.message.error;
+      for (const field in errors) {
+        errors[field].forEach((errorMessage) => {
+          toast.error(`${errorMessage}`);
+        });
+      }
+      // toast.error(error.response.data.message);
+      // toast.error(
+      //   typeof errorMessage === "object"
+      //     ? JSON.stringify(errorMessage)
+      //     : errorMessage
+      // );
     }
   };
 
@@ -89,29 +145,18 @@ export const UserAuthProvider = ({ children }) => {
     }
   };
 
-  const register = async ({ ...data }) => {
-    try {
-      const response = await axiosInstance.post("/register", {
-        ...data,
-      });
-      console.log(response);
-      const userToken = response.data.data.token;
-      localStorage.setItem("token", userToken);
-      if (userToken) {
-        await getUser();
-        navigate("/", { replace: true });
-      } else {
-        navigate("/register");
-      }
-      return response;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <authContext.Provider
-      value={{ loading, user, login, logout, register, getUser }}
+      value={{
+        loading,
+        user,
+        login,
+        logout,
+        register,
+        getUser,
+        token,
+        addCompany,
+      }}
     >
       {children}
     </authContext.Provider>

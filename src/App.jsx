@@ -10,6 +10,12 @@ import SuperAdminLayout from "./layouts/SuperAdminLayout";
 import Items from "./pages/admin/Items";
 import Users from "./pages/admin/Users";
 import Admin from "./pages/admin/Admin";
+import Home from "./pages/admin/Home";
+import Company from "./pages/admin/Company";
+import AddCompanyPage from "./pages/company/AddCompanyPage";
+import CompanyLayout from "./layouts/CompanyLayout";
+import ViewCompanyPage from "./pages/company/ViewCompanyPage";
+import EditCompanyPage from "./pages/company/EditCompanyPage";
 
 function App() {
   const { user, loading } = useAuthContext();
@@ -18,22 +24,15 @@ function App() {
 
   const RequireAuth = ({ children }) => {
     return user ? children : <Navigate to={"/login"} replace={true} />;
-    // if (!user && location.pathname === "/") {
-    //   return <Navigate to={"/login"} replace />;
-    // } else if (user && location.pathname === "/login") {
-    //   return <Navigate to={"/"} replace />;
-    // } else {
-    //   return children;
-    // }
   };
 
-  // if (loading) {
-  //   return (
-  //     <div className="h-screen bg:dark-gray-9000 dar:text-white flex justify-center items-center">
-  //       Loading...
-  //     </div>
-  //   );
-  // }
+  if (loading) {
+    return (
+      <div className="h-screen bg:dark-gray-9000 dar:text-white flex justify-center items-center">
+        Loading...
+      </div>
+    );
+  }
 
   return (
     <>
@@ -48,9 +47,15 @@ function App() {
               </RequireAuth>
             }
           >
+            <Route path="/" element={<Home />} />
             <Route path="/items" element={<Items />} />
             <Route path="/users" element={<Users />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/company" element={<CompanyLayout />}>
+              <Route path="/company" element={<ViewCompanyPage />} />
+              <Route path="add" element={<AddCompanyPage />} />
+              <Route path="edit" element={<EditCompanyPage />} />
+            </Route>
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />

@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import { FaBackward, FaHome, FaUsers } from "react-icons/fa";
+import { FaBackward, FaHome, FaUsers, FaBuilding } from "react-icons/fa";
 import { MdFullscreenExit } from "react-icons/md";
 import { MdAdminPanelSettings } from "react-icons/md";
 import { BiLogOut } from "react-icons/bi";
@@ -14,7 +14,7 @@ const Sidebar = () => {
     {
       name: "Home",
       icon: <FaHome size={20} />,
-      link: "/home",
+      link: "/",
     },
     {
       name: "Users",
@@ -25,6 +25,11 @@ const Sidebar = () => {
       name: "Admin",
       icon: <MdAdminPanelSettings size={20} />,
       link: "/admin",
+    },
+    {
+      name: "Company",
+      icon: <FaBuilding />,
+      link: "/company",
     },
     {
       name: "Items",

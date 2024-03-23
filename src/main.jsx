@@ -5,6 +5,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import "./index.css";
 
 import { UserAuthProvider } from "./context/AuthContext.jsx";
+import { CompanyProvider } from "./context/CompanyContext.jsx";
 
 /* 
  ! Notes: 
@@ -17,7 +18,9 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <Router>
       <UserAuthProvider>
-        <App />
+        <CompanyProvider>
+          <App />
+        </CompanyProvider>
       </UserAuthProvider>
     </Router>
   </React.StrictMode>

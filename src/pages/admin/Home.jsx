@@ -16,7 +16,7 @@ const Home = () => {
     },
   ];
   return (
-    <div>
+    <div className="bg-gray-800 h-screen">
       <div className="py-10 flex flex-wrap items-center justify-center gap-4">
         {cards.map((card, index) => (
           <CountCard key={index} title={card.title} count={card.count} />
